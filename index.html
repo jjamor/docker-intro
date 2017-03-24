@@ -204,12 +204,14 @@
           </p>
         </section>
 
+<!--
         <section>
           <h1>Talk nerdy to me...</h1>
           <p>
             <img src="media/imgs/lion-cat.gif">
           </p>
         </section>
+-->
 
         <section>
           <h1>Instalación de docker</h1>
@@ -367,9 +369,9 @@ RUN gem install sinatra
           <h1>Marchando un docker de wordpress!!</h1>
           <pre><code class="bash" data-trim>
 # docker pull wordpress
-# docker pull mysql
-# docker run --name wp-mysql -e MYSQL_ROOT_PASSWORD=mysecretpassword -d mysql
-# docker run --name my-wordpress --link wp-mysql:mysql -p 8080:80 -d wordpress
+# docker pull mysql:5.7
+# docker run --name wordpressdb -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=wordpress -d mysql:5.7
+# docker run -e WORDPRESS_DB_PASSWORD=password -d --name wordpress --link wordpressdb:mysql -p 8080:80 wordpress
 # chromium http://your.ip.address:8080
           </code></pre>
         </section>
@@ -388,17 +390,19 @@ RUN gem install sinatra
         <section>
           <h1>Wordpress en docker-compose.yml</h1>
           <pre><code class="nohighlight" data-trim>
-ComposeWP:
-  image: wordpress
-  ports:
-   - "8081:80"
-  links:
-   - ComposeMysql:mysql
+version: '2'
+services:
+  wordpress:
+    image: wordpress
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_PASSWORD: example
 
-ComposeMysql:
-  image: mysql
-  environment:
-    MYSQL_ROOT_PASSWORD: mysecretpassword
+  mysql:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: example
           </code></pre>
           <pre><code class="bash" data-trim>
 # docker-compose up -d
